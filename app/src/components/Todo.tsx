@@ -1,46 +1,39 @@
-import { useState, useEffect, FormEvent } from "react";
+// src/components/Todo.tsx
+import { useState, FormEvent } from "react";
 
 type Todo = { id: string; text: string; done: boolean };
 
 export default function Todo() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [text, setText] = useState("");
+  const [imageUrl, setImageUrl] = useState<string | null>(null);  // ★ 追加
 
-  // Load todos from localStorage on mount
-  useEffect(() => {
-    const savedTodos = localStorage.getItem("ai-todos");
-    if (savedTodos) {
-      try {
-        setTodos(JSON.parse(savedTodos));
-      } catch (error) {
-        console.error("Failed to parse saved todos:", error);
-      }
-    }
-  }, []);
+  /* ---------------- Todo 基本ロジック ---------------- */
 
-  // Save todos to localStorage whenever todos change
-  useEffect(() => {
-    localStorage.setItem("ai-todos", JSON.stringify(todos));
-  }, [todos]);
-
-  /** add a new todo */
-  const add = (e: FormEvent<HTMLFormElement>) => {
+  const add = (e: FormEvent) => {
     e.preventDefault();
     if (!text.trim()) return;
     setTodos([{ id: crypto.randomUUID(), text, done: false }, ...todos]);
     setText("");
   };
 
-  /** toggle done/undone */
   const toggle = (id: string) =>
     setTodos(todos.map(t => (t.id === id ? { ...t, done: !t.done } : t)));
 
-  /** delete a todo */
   const del = (id: string) => setTodos(todos.filter(t => t.id !== id));
+
+  /* ---------------- 画像フェッチ ---------------- */
+
+  // src/components/Todo.tsx  抜粋（surprise 関数を書き換え）
+  const surprise = () => {
+    // Date.now() をシードにして毎回違う画像
+    const url = `https://picsum.photos/seed/${Date.now()}/400/300`;
+    setImageUrl(url);
+  };
 
   return (
     <div className="mx-auto max-w-lg p-6">
-      <h2 className="text-xl font-bold mb-4 text-center">AI ToDo4</h2>
+      <h2 className="text-xl font-bold mb-4 text-center">Todo List</h2>
 
       {/* add form */}
       <form onSubmit={add} className="flex gap-2 mb-6">
@@ -57,6 +50,23 @@ export default function Todo() {
           Add
         </button>
       </form>
+
+      {/* Surprise me ボタン */}
+      <button
+        onClick={surprise}
+        className="mb-6 block bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700"
+      >
+        Surprise me
+      </button>
+
+      {/* ランダム画像の表示 */}
+      {imageUrl && (
+        <img
+          src={imageUrl}
+          alt="Surprise!"
+          className="mb-6 w-full rounded shadow"
+        />
+      )}
 
       {/* list */}
       <ul className="space-y-2">
