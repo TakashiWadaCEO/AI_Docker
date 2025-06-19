@@ -40,7 +40,7 @@ export default function Todo() {
 
   return (
     <div className="mx-auto max-w-lg p-6">
-      <h2 className="text-xl font-bold mb-4 text-center">AI ToDo3</h2>
+      <h2 className="text-xl font-bold mb-4 text-center">AI ToDo4</h2>
 
       {/* add form */}
       <form onSubmit={add} className="flex gap-2 mb-6">
