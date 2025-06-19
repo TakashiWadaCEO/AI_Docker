@@ -7,7 +7,7 @@ COPY index.html ./index.html
 COPY src ./src
 RUN npm run build
 
-FROM nginx:1.26-alpine3.19@sha256:a5127daff3d6f4606be3100a252419bfa84fd6ee5cd74d0feaca1a5068f97dcf
+FROM nginx:1-alpine@sha256:62223d644fa234c3a1cc785ee14242ec47a77364226f1c811d2f669f96dc2ac8
 COPY --from=builder /app/dist /usr/share/nginx/html
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
