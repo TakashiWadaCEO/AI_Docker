@@ -32,7 +32,7 @@ export function Button({
 
   return (
     <button
-      className={clsx(base, variants[variant], sizes[size], className)}
+      className={clsx(base, "dark:bg-slate-700 dark:text-slate-100",variants[variant], sizes[size], className)}
       {...props}
     />
   );
