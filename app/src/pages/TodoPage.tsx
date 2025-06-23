@@ -1,6 +1,6 @@
 // app/src/App.tsx
-import Todo from "./components/Todo";
+import Todo from "@/components/Todo";
 
-export default function App() {
+export default function TodoPage() {
   return <Todo />;
 }
