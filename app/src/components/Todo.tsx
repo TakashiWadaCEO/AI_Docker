@@ -1,27 +1,26 @@
 // src/components/Todo.tsx
 import { FormEvent, useState } from "react";
 import { useTodoStore } from "@/store/useTodoStore";
+import clsx from "classnames";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function Todo() {
-  /* ===== Zustand store ===== */
   const { todos, add, toggle, del } = useTodoStore();
 
-  /* ===== ローカル入力状態 ===== */
   const [text, setText] = useState("");
-  const [due,  setDue]  = useState("");          // ← 期日用
+  const [due,  setDue]  = useState("");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
-  /* ===== 追加処理 ===== */
   const handleAdd = (e: FormEvent) => {
     e.preventDefault();
     if (!text.trim()) return;
 
-    add(text, due || undefined);   // 期日が空なら undefined
+    add(text, due || undefined);
     setText("");
     setDue("");
   };
 
-  /* ===== 画像フェッチ ===== */
   const surprise = () => {
     const url = `https://picsum.photos/seed/${Date.now()}/400/300`;
     setImageUrl(url);
@@ -36,73 +35,58 @@ export default function Todo() {
         onSubmit={handleAdd}
         className="flex flex-col sm:flex-row gap-2 mb-6"
       >
-        {/* タスク内容 */}
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Add a task..."
           className="flex-grow border rounded px-3 py-2"
         />
-
-        {/* 期日入力（省略可） */}
         <input
           type="date"
           value={due}
           onChange={(e) => setDue(e.target.value)}
           className="border rounded px-3 py-2"
         />
-
-        {/* 追加ボタン */}
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
+        <Button type="submit" className="w-full sm:w-auto">
           Add
-        </button>
+        </Button>
       </form>
 
-      {/* ---------- Surprise me ボタン ---------- */}
-      <button
-        onClick={surprise}
-        className="mb-6 block bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700"
-      >
+      {/* ---------- Surprise me ---------- */}
+      <Button onClick={surprise} variant="secondary" className="mb-6">
         Surprise me
-      </button>
+      </Button>
 
-      {/* ランダム画像 */}
       {imageUrl && (
-        <img
-          src={imageUrl}
-          alt="Surprise!"
-          className="mb-6 w-full rounded shadow"
-        />
+        <img src={imageUrl} alt="Surprise!" className="mb-6 w-full rounded shadow" />
       )}
 
       {/* ---------- Todo list ---------- */}
-      <ul className="space-y-2">
+      <ul className="space-y-3">
         {todos.map((t) => (
-          <li
-            key={t.id}
-            className="flex items-center justify-between bg-white rounded shadow p-3"
-          >
-            <span
-              onClick={() => toggle(t.id)}
-              className={`flex-grow cursor-pointer ${
-                t.done ? "line-through text-gray-400" : ""
-              }`}
-            >
-              {t.text}
-              {t.due && (
-                <span className="ml-2 text-sm text-gray-500">({t.due})</span>
-              )}
-            </span>
-            <button
-              onClick={() => del(t.id)}
-              className="text-sm text-red-500 hover:underline"
-            >
-              ×
-            </button>
-          </li>
+          <Card key={t.id} className={t.done ? "opacity-60" : ""}>
+            <CardContent className="flex items-center justify-between py-3">
+              <span
+                onClick={() => toggle(t.id)}
+                className={clsx(
+                  "cursor-pointer flex-grow",
+                  t.done && "line-through text-gray-400"
+                )}
+              >
+                {t.text}
+                {t.due && (
+                  <span className="ml-2 text-sm text-gray-500">({t.due})</span>
+                )}
+              </span>
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => del(t.id)}
+              >
+                ×
+              </Button>
+            </CardContent>
+          </Card>
         ))}
       </ul>
     </div>

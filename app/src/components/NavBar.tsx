@@ -2,23 +2,29 @@
 import { NavLink } from "react-router-dom";
 
 export default function NavBar() {
-  // isActive を受け取って動的クラスを返す関数
+  // NavLink に渡すクラス生成関数
   const linkClasses = ({ isActive }: { isActive: boolean }) =>
-    `px-4 py-2 rounded-lg transition hover:bg-slate-200 ${
-      isActive ? "bg-slate-300 font-bold" : ""
-    }`;
+    [
+      "transition",
+      "hover:text-accent",              // ホバー時に差し色
+      isActive && "underline font-semibold", // 現在ページ
+    ]
+      .filter(Boolean)
+      .join(" ");
 
   return (
-    <header className="flex gap-2 p-4 shadow">
-      <NavLink to="/todo"     className={linkClasses}>
-        ToDo
-      </NavLink>
-      <NavLink to="/calendar" className={linkClasses}>
-        カレンダー
-      </NavLink>
-      <NavLink to="/memo"     className={linkClasses}>
-        メモ
-      </NavLink>
+    <header className="bg-brand text-white px-6 py-3 shadow-md">
+      <nav className="flex gap-6">
+        <NavLink to="/todo"     className={linkClasses}>
+          ToDo
+        </NavLink>
+        <NavLink to="/calendar" className={linkClasses}>
+          カレンダー
+        </NavLink>
+        <NavLink to="/memo"     className={linkClasses}>
+          メモ
+        </NavLink>
+      </nav>
     </header>
   );
 }
