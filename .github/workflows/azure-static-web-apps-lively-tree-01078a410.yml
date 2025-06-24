@@ -11,35 +11,40 @@ jobs:
   build_and_deploy_job:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
-    name: Build and Deploy Job
-    env:                         # ★ ジョブ全体に適用
-      NODE_ENV: development      # devDependencies を含めて install
-      NPM_CONFIG_PRODUCTION: "false"
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: true
-          lfs: false
 
-      - name: Build And Deploy
-        id: builddeploy
+    steps:
+      # 1) チェックアウト
+      - uses: actions/checkout@v3
+
+      # 2) -------- 手動ビルド (devDeps 含む) --------
+      - name: Install & Build (Vite)
+        run: |
+          cd app
+          npm ci            # devDependencies も含めて install
+          npm run build     # dist/ が生成される
+        # ↑ node 18 は GitHub ランナーにプリインストール
+
+      # 3) -------- アップロードのみ --------
+      - name: Deploy to Azure Static Web Apps
+        id: deploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_LIVELY_TREE_01078A410 }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: upload
-          app_location: "./app"          # ソース
-          api_location: ""               # API なし
-          output_location: "app/dist"    # ビルド成果物
-          skip_api_build: true           # 明示的に API ビルド無効化
-
+          #### SPA 設定 ####
+          skip_app_build: true            # ← Oryx ビルドをスキップ
+          app_location: "app"             # 必須だがビルドしないので適当で OK
+          output_location: "app/dist"     # ②で作った成果物
+          api_location: ""                # API なし
+          skip_api_build: true
+          ###################
+          
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
-    name: Close Pull Request Job
     steps:
       - name: Close Pull Request
-        id: closepullrequest
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_LIVELY_TREE_01078A410 }}
