@@ -9,38 +9,40 @@ on:
 
 jobs:
   build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    # push か PR(open/sync/reopen) で動く
+    if: >
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
-
     steps:
-      # 1) チェックアウト
+      # 1) ソース取得
       - uses: actions/checkout@v3
 
-      # 2) -------- 手動ビルド (devDeps 含む) --------
+      # 2) -------- 手動ビルド (devDependencies を含める) --------
       - name: Install & Build (Vite)
         run: |
           cd app
-          npm ci            # devDependencies も含めて install
-          npm run build     # dist/ が生成される
-        # ↑ node 18 は GitHub ランナーにプリインストール
+          npm ci
+          npm run build            # → app/dist が生成される
 
-      # 3) -------- アップロードのみ --------
+      # 3) -------- dist をアップロード --------
       - name: Deploy to Azure Static Web Apps
-        id: deploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_LIVELY_TREE_01078A410 }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
+
+          # ---------- 設定 ----------
           action: upload
-          #### SPA 設定 ####
-          skip_app_build: true            # ← Oryx ビルドをスキップ
-          app_location: "app"             # 必須だがビルドしないので適当で OK
-          output_location: "app/dist"     # ②で作った成果物
-          api_location: ""                # API なし
+          app_location: "app"           # ソースルート
+          skip_app_build: true          # Oryx ビルドをスキップ
+          app_artifact_location: "dist" # ↑app/ からの相対パス
+          api_location: ""              # API なし
           skip_api_build: true
-          ###################
-          
+          # --------------------------
+
   close_pull_request_job:
+    # PR が close/merge されたらプレビュー環境を削除
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
     steps:
