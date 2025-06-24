@@ -27,7 +27,7 @@ export default function NavBar() {
     <header className="bg-brand text-white px-6 py-3 shadow-md">
       <nav className="flex items-center gap-6">
         {/* ------- タイトル ------- */}
-        <h1 className="text-xl font-bold">Vibecoding challenge!</h1>
+        <h1 className="text-xl font-bold">😊 Vibecoding challenge!</h1>
         
         {/* ------- 左側のメニュー ------- */}
         <NavLink to="/todo"     className={linkClasses}>ToDo</NavLink>
