@@ -9,22 +9,24 @@ on:
 
 jobs:
   build_and_deploy_job:
-    # push または open/sync/reopen の PR で実行
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    if: >
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
 
     steps:
-      # 1) リポジトリ取得
+      # 1) ソース取得
       - uses: actions/checkout@v3
 
-      # 2) -------- 手動ビルド --------
-      - name: Install & Build (Vite)
+      # 2) -------- Vite 手動ビルド --------
+      - name: Install & Build
         run: |
           cd app
           npm ci
-          npm run build          # => app/dist
+          npm run build                     # → app/dist/
+          cp staticwebapp.config.json dist/ # ← dist にもコピー
 
-      # 3) -------- アップロードだけ --------
+      # 3) -------- dist をアップロード --------
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
         with:
@@ -32,19 +34,16 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: upload
 
-          # ----- 重要パラメータ -----
-          app_location: "app/dist"                 # ビルド成果物がサイトのルート
-          skip_app_build: true                     # Oryx ビルドを完全スキップ
-          api_location: ""                         # API なし
+          app_location: "app/dist"   # dist がサイトルート
+          skip_app_build: true
+          api_location: ""
           skip_api_build: true
-          config_file_location: "app/staticwebapp.config.json"  # SPA ルーティング設定
-          # --------------------------
+          # config_file_location も routes_location も不要（dist 内に同梱したため）
 
-  # プルリクが閉じたときプレビュー環境をクリーンアップ
+  # -------- PR クローズ時にプレビュー環境を終了 --------
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
-
     steps:
       - name: Close Preview Environment
         uses: Azure/static-web-apps-deploy@v1
