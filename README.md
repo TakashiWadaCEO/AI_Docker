@@ -2,9 +2,17 @@
 
 生成AIの支援を受けてプログラム開発を行うことをVibecodingと称する。そこでVibecodingの力を借りて実践してみた所、ほとんどwebアプリ開発の知識がない状態からわずか４時間程度でwebアプリを開発出来たので、そのやり方を皆さんにも共有したいと思う。下は実際に動作するAWS、Azureの各URLである。
 
-[AI-Todo](https://main.d1xy4rjc1tmhl9.amplifyapp.com/todo)(AWS) “https://main.d1xy4rjc1tmhl9.amplifyapp.com/todo”
+### webアプリの各動作環境：
 
-[AI-Todo](https://lively-tree-01078a410.6.azurestaticapps.net/todo)(Azure) “https://lively-tree-01078a410.6.azurestaticapps.net/todo”
+1. AWS版：
+→https://main.d1xy4rjc1tmhl9.amplifyapp.com/todo
+2. Azure版：
+→[https://lively-tree-01078a410.6.azurestaticapps.net/](https://lively-tree-01078a410.6.azurestaticapps.net/calendar)todo
+3. Docker実行環境版：/appで$docker compose up -d
+→ [http://localhost:3000](http://localhost:3000/)
+4. Dockerホットリロード版：/appで$npm run dev              
+→ [http://localhost:5173](http://localhost:5173/)
+
 
 2025年6月の段階で、OpneAIのo3/o3-Pro、Geminiの2.5Flash/Pro6-5、ClaudeのSONNET/OPUS4.0と登場し下記を実現している。
 
