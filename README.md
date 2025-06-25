@@ -7,7 +7,7 @@
 1. AWS版：
 →https://main.d1xy4rjc1tmhl9.amplifyapp.com/todo
 2. Azure版：
-→[https://lively-tree-01078a410.6.azurestaticapps.net/](https://lively-tree-01078a410.6.azurestaticapps.net/calendar)todo
+→[https://lively-tree-01078a410.6.azurestaticapps.net/](https://lively-tree-01078a410.6.azurestaticapps.net/todo)
 3. Docker実行環境版：/appで$docker compose up -d
 → [http://localhost:3000](http://localhost:3000/)
 4. Dockerホットリロード版：/appで$npm run dev              
